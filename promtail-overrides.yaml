@@ -1,0 +1,4 @@
+config:
+  clients:
+  # specific client for loki-distributed gateway, used for sending the logs promtail gathered to loki.
+    - url: http://loki-loki-distributed-gateway/loki/api/v1/push

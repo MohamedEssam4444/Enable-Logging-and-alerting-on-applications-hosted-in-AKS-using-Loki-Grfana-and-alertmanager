@@ -1,0 +1,128 @@
+## Configuration for prometheus-windows-exporter
+## ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-windows-exporter
+##
+prometheus-windows-exporter:
+  ## Enable/disable ServiceMonitor and set Kubernetes label to use as a job label
+  ##
+  prometheus:
+    monitor:
+      enabled: false
+
+## Configuration for alertmanager
+## ref: https://prometheus.io/docs/alerting/alertmanager/
+## Add persistent volume for alerts to be kept not deleted if the pod is restared.
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 10Gi   
+          
+  ## Alertmanager configuration directives
+  ## ref: https://prometheus.io/docs/alerting/configuration/#configuration-file
+  ##      https://prometheus.io/webtools/alerting/routing-tree-editor/
+  ##
+  config:
+    global:
+      slack_api_url: 'https://hooks.slack.com/services/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' # slack api url webhook requested to the channel to be able to access slack channel and send msgs to.
+      resolve_timeout: 5m
+    inhibit_rules:
+      - source_matchers:
+          - 'severity = critical'
+        target_matchers:
+          - 'severity =~ warning|info'
+        equal:
+          - 'namespace'
+          - 'alertname'
+      - source_matchers:
+          - 'severity = warning'
+        target_matchers:
+          - 'severity = info'
+        equal:
+          - 'namespace'
+          - 'alertname'
+      - source_matchers:
+          - 'alertname = InfoInhibitor'
+        target_matchers:
+          - 'severity = info'
+        equal:
+          - 'namespace'
+    # doc for alert manager to slack. https://prometheus.io/docs/alerting/latest/notification_examples/
+    # if you want to send to email instead of slack check this https://blog.devops.dev/send-email-alerts-using-prometheus-alert-manager-16df870144a4
+    route:
+      group_wait: 30s
+      group_interval: 1m # send alerts to slack each 15 minutes,# In order to avoid continuously sending notifications for similar alerts (like the same process failing on multiple instances, nodes, and data centres), the Alertmanager may be configured to group these related alerts into one alert, Instead we wait for the group_interval since the last notification was sent to the group, and then send all alerts firing (and any resolved alerts) to the receiver.
+      repeat_interval: 15m
+      receiver: "slack-default" # default route to receive alerts if no receiver specified.
+      group_by: ['alertname', 'job'] # When a rule is evaluated, its state can be altered to be either inactive, pending, or firing. Following evaluation, this state is sent to the connected Alertmanager to potentially start/stop the sending of alert notifications. 
+      routes:
+        - receiver: "slack-warn-critical"
+          matchers:
+            - severity =~ "warning|critical" # send to slack-warn-critical receiver if the log label severity of the alert coming is wanrning or critical.
+          continue: true
+    receivers:
+      - name: "slack-default"
+        slack_configs:
+          - channel: "test" # slack channel name to send alerts to
+            send_resolved: true
+      - name: "slack-warn-critical"
+        slack_configs:
+          - channel: "test"
+            send_resolved: true
+            icon_url: https://avatars3.githubusercontent.com/u/3380462
+            title: |-
+              [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }} for {{ .CommonLabels.job }}
+              {{- if gt (len .CommonLabels) (len .GroupLabels) -}}
+                {{" "}}(
+                {{- with .CommonLabels.Remove .GroupLabels.Names }}
+                  {{- range $index, $label := .SortedPairs -}}
+                    {{ if $index }}, {{ end }}
+                    {{- $label.Name }}="{{ $label.Value -}}"
+                  {{- end }}
+                {{- end -}}
+                )
+              {{- end }}
+            # slack templating https://harthoover.com/pretty-alertmanager-alerts-in-slack/
+            text: >-
+              {{ range .Alerts -}}
+              *Details:*
+                {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+                {{ end }}
+              {{ end }}
+
+## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+##
+# create pv volume with 30G(10G is the default value)
+grafana:
+  persistence:
+    enabled: true
+    size: 30Gi
+  defaultDashboardsEnabled: false
+
+#disable prometheus default datasource in grafana so that loki will be the default data source
+  sidecar:
+    datasources:
+      isDefaultDatasource: false
+  uid: prometheus
+
+  ## Configure additional grafana datasources (passed through tpl)
+  ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+  additionalDataSources: 
+    - name: default
+      isDefault: true
+      editable: true
+      orgId: 1
+      type: loki
+      url: http://loki-loki-distributed-gateway:80 # url of the loki-distributed gateway.
+      version: 1
+
+  serviceMonitor:
+    # If true, a ServiceMonitor CRD is created for a prometheus operator
+    # https://github.com/coreos/prometheus-operator
+    #
+    enabled: false
+
+prometheus:
+  enabled: false
