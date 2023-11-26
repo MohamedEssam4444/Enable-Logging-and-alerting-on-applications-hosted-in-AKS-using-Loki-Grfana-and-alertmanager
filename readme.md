@@ -1,9 +1,10 @@
 # Install Loki-distributed,alertmanager and grafana helm charts and enable alering on logs.
 
 ## Archeticture :
-![aws infra soln (1)](https://user-images.githubusercontent.com/68178003/100848077-510e7d00-3489-11eb-9603-805b5cf6b78f.jpeg)
+![Blank board](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/69a034f2-2583-4833-bedb-3a330033f432)
 
-* **Loki**: Loki server serves as storage, storing the logs in a time series database, but it won’t index them. To visualize the logs, you need to extend Loki with Grafana in combination with LogQL.
+* **Loki**: Loki server serves as storage, storing the logs in a time series database, but it won’t index them. To visualize the logs, you need
+ to extend Loki with Grafana in combination with LogQL.
 
 [Grafana-loki Documentation](https://grafana.com/docs/grafana/latest/datasources/loki/)
 
@@ -46,7 +47,7 @@ Compared to other log aggregation systems, Loki offers several advantages:
 
 ### Loki-distributed Archeticture:
 
-
+![Blank diagram](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/429ec636-8f33-40df-9efe-5a614d5e8034)
 
 ### components: 
 
@@ -100,6 +101,18 @@ Overall, using Loki in a distributed manner offers significant benefits in terms
 ### Deployment: 
 
 1. Create **AzureBlobStorage**:
+
+![Screenshot from 2023-11-21 23-19-01](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/b6c8a3f4-85c2-4e47-8851-a5e2557b6434)
+
+![Screenshot from 2023-11-21 23-20-48](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/cd872098-a6a3-486c-b122-41406d78ae6e)
+
+![Screenshot from 2023-11-21 23-21-07](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/290b4a1e-ea1b-47c6-ac3a-96ba49a70caa)
+
+![Screenshot from 2023-11-21 23-22-46](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/2c634c11-6543-4c1b-89a8-9e57636b7c29)
+
+![Screenshot from 2023-11-21 23-23-06](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/32594eab-6cf8-4490-8c19-07f57a495252)
+
+![Screenshot from 2023-11-21 23-25-16](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/9cb24402-75ae-4d4e-b973-c98379532546)
 
 2. Create kubernetes secret for **storageAccountName & key**: 
 
