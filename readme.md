@@ -5,40 +5,33 @@
 
 * **Loki**: Loki server serves as storage, storing the logs in a time series database, but it won’t index them. To visualize the logs, you need
  to extend Loki with Grafana in combination with LogQL.
-
 [Grafana-loki Documentation](https://grafana.com/docs/grafana/latest/datasources/loki/)
 
 * **Grafana**: An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach. It provides charts, graphs, and alerts for the web when connected to supported data sources.
-
 [Documentation](https://grafana.com/docs/grafana/latest/)
 
 * **Promtail**: deployed as a DaemonSet, and they're in charge of collecting logs from various pods/containers of our nodes. Loki supports various types of agents, but the default one is called Promtail.
 * Promtail does the following actions:
-
 1. It discovers the targets having logs
 2. It attaches labels to log streams
 3. And it pushes the log stream to Loki
-
 [Documentation](https://grafana.com/docs/loki/latest/send-data/promtail/)
 
 * **Alertmanager**: The Alertmanager handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integrations such as email, PagerDuty, OpsGenie, or many other mechanisms thanks to the webhook receiver. It also takes care of silencing and inhibition of alerts.
-
 [Documentation](https://prometheus.io/docs/alerting/latest/alertmanager/)
 
 * **AzureBlobStorage**: Unlike other logging systems, Grafana Loki is built around the idea of only indexing metadata about your logs: labels (just like Prometheus labels). Log data itself is then compressed and stored in chunks in object stores such as Azure storage account(blob storage).
 **Blob Storage** is Microsoft Azure’s hosted object store. It is a good candidate for a managed object store, especially when you’re already running on Azure, and is production safe. You can authenticate Blob Storage access by using a storage account name and key or by using a Service Principal.
-
 [Documentation](https://learn.microsoft.com/en-us/azure/storage/blobs/)
 
 * **Slack**: To receive alerts from AlertManager.
 
-
 ### What is Loki?:
 Loki is a horizontally-scalable, highly-available, multi-tenant log aggregation system inspired by Prometheus, a popular monitoring and alerting toolkit. Like Prometheus, Loki is designed to be simple to operate and cost-effective. Unlike many other log aggregation systems(like Elasticsearch), Loki does not index the contents of logs but instead indexes a set of labels for each log stream which makes it very cost effective
 
-### Key Features of Loki
-Compared to other log aggregation systems, Loki offers several advantages:
+### Key Features of Loki:
 
+Compared to other log aggregation systems, Loki offers several advantages:
 1. **No full-text indexing on logs**: Loki stores compressed, unstructured logs and only indexes metadata. This makes Loki simpler to operate and cheaper to run compared to systems that index the entire contents of logs.
 2. **Label-based indexing and grouping**: Loki indexes and groups log streams using the same labels as Prometheus. This enables seamless switching between metrics and logs using the same labels you’re already using with Prometheus.
 3. **Ideal for Kubernetes Pod logs**: Loki is particularly well-suited for storing Kubernetes Pod logs, as it automatically scrapes and indexes metadata such as Pod labels.
@@ -52,24 +45,17 @@ Compared to other log aggregation systems, Loki offers several advantages:
 ### components: 
 
 1. **Gateway**: Functions as reverse proxy and loadbalancer for efficient query routing and HighAvailability.
-
 2. **Distributor**:
 The distributor service is responsible for handling incoming streams by clients. It’s the first stop in the write path for log data. Once the distributor receives a set of streams, each stream is validated for correctness and to ensure that it is within the configured tenant (or global) limits
-
 3. **Ingester**:
 The ingester service is responsible for writing log data to long-term storage backends (DynamoDB, S3, zurestorage, etc.) on the write path and returning log data for in-memory queries on the read path.
-
 4. **queryFrontend**:
 used to accelerate the read path. When the query frontend is in place, incoming query requests should be directed to the query frontend instead of the queriers. The querier service will be still required within the cluster, in order to execute the actual queries.
 The query frontend internally performs some query adjustments and holds queries in an internal queue. In this setup, queriers act as workers which pull jobs from the queue, execute them, and return them to the query-frontend for aggregation
-
 5. **querier**:
 The querier service handles queries using the LogQL query language, fetching logs both from the ingesters and from long-term storage(azure blobstore in our case or s3 if using amazon s3 buckets).
-
 6. **ruler**: alerts management, it evaluates the rules of loki alerts and trigger alert if any rule meets the threshold set.
-
 7. **compactor**: reducing the size of indexes and managing the storage time of logs in the data store (retention).
-
 8. **index-gateway**: facilitates management of index-related operations and optimize log retrieval querying to enhance overall performance.
 
 ### Why Loki-distributed?:
