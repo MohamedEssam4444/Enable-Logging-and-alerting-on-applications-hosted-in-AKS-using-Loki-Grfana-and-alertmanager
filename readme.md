@@ -51,7 +51,7 @@ Compared to other log aggregation systems, Loki offers several advantages:
 
 ### components: 
 
-1. **Gateway**: 
+1. **Gateway**: Functions as reverse proxy and loadbalancer for efficient query routing and HighAvailability.
 
 2. **Distributor**:
 The distributor service is responsible for handling incoming streams by clients. It’s the first stop in the write path for log data. Once the distributor receives a set of streams, each stream is validated for correctness and to ensure that it is within the configured tenant (or global) limits
