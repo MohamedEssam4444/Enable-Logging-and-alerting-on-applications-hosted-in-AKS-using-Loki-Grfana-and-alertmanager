@@ -11,7 +11,7 @@
 [Documentation](https://grafana.com/docs/grafana/latest/)
 
 * **Promtail**: deployed as a DaemonSet, and they're in charge of collecting logs from various pods/containers of our nodes. Loki supports various types of agents, but the default one is called Promtail.
-* Promtail does the following actions:
+Promtail does the following actions:
 1. It discovers the targets having logs
 2. It attaches labels to log streams
 3. And it pushes the log stream to Loki
