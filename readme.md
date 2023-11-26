@@ -1,7 +1,7 @@
 # Install Loki-distributed,alertmanager and grafana helm charts and enable alering on logs.
 
 ## Archeticture :
-![Blank diagram (1)](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/684935ae-b5fc-4dd2-97aa-62ac5c5ffdd0)
+![Blank board](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/69a034f2-2583-4833-bedb-3a330033f432)
 
 * **Loki**: Loki server serves as storage, storing the logs in a time series database, but it won’t index them. To visualize the logs, you need
  to extend Loki with Grafana in combination with LogQL.
@@ -40,7 +40,7 @@ Compared to other log aggregation systems, Loki offers several advantages:
 
 ### Loki-distributed Archeticture:
 
-![Blank diagram](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/429ec636-8f33-40df-9efe-5a614d5e8034)
+![Blank diagram (1)](https://github.com/MohamedEssam4444/Enable-Logging-and-alerting-on-applications-hosted-in-AKS-using-Loki-Grfana-and-alertmanager/assets/68178003/684935ae-b5fc-4dd2-97aa-62ac5c5ffdd0)
 
 ### components: 
 
